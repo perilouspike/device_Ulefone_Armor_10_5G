@@ -6,7 +6,7 @@
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/omni_Armor_10_5G.mk
+    $(LOCAL_DIR)/twrp_Armor_10_5G.mk
 
 COMMON_LUNCH_CHOICES := \
-    omni_Armor_10_5G-eng
+    twrp_Armor_10_5G-eng
