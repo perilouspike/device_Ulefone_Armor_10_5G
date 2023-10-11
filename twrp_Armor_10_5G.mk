@@ -17,7 +17,7 @@ $(call inherit-product, vendor/twrp/config/common.mk)
 $(call inherit-product, device/ulefone/Armor_10_5G/device.mk)
 
 PRODUCT_DEVICE := Armor_10_5G
-PRODUCT_NAME := omni_Armor_10_5G
+PRODUCT_NAME := twrp_Armor_10_5G
 PRODUCT_BRAND := Ulefone
 PRODUCT_MODEL := Armor 10 5G
 PRODUCT_MANUFACTURER := ulefone
