@@ -44,7 +44,7 @@ TARGET_SCREEN_DENSITY := 480
 
 # Kernel
 BOARD_KERNEL_BASE := 0x40078000
-BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 buildvariant=user
+BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 androidboot.selinux=permissive
 #BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_RAMDISK_OFFSET := 0x07c08000
@@ -113,11 +113,11 @@ PLATFORM_VERSION := 20.1.0
 
 # TWRP Configuration
 TW_THEME := portrait_hdpi
-#TW_SCREEN_BLANK_ON_BOOT := true
+TW_SCREEN_BLANK_ON_BOOT := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_USE_TOOLBOX := true
 RECOVERY_SDCARD_ON_DATA := true
-#BOARD_CHARGER_DISABLE_INIT_BLANK := true
+BOARD_CHARGER_DISABLE_INIT_BLANK := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
 TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
@@ -126,9 +126,9 @@ TW_DEFAULT_BRIGHTNESS := 1200
 TARGET_USES_MKE2FS := true
 TW_DEVICE_VERSION := perilouspike-beta1
 #TW_PREPARE_DATA_MEDIA_EARLY := true
-#TW_NO_SCREEN_BLANK := true
+TW_NO_SCREEN_BLANK := true
 TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
-#TW_LOAD_VENDOR_MODULES := true
+TW_LOAD_VENDOR_MODULES := true
 
 # Exclude
 TW_EXCLUDE_TWRPAPP := true
