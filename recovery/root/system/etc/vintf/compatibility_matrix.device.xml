@@ -1,7 +1,6 @@
 <!--
     Input:
         device_framework_matrix.xml
-        compatibility_matrix.xml
 -->
 <compatibility-matrix version="2.0" type="framework">
     <hal format="hidl" optional="true">
