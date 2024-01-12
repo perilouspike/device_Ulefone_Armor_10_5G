@@ -49,7 +49,8 @@ BOARD_USES_MTK_HARDWARE := true
 
 # Kernel
 BOARD_KERNEL_BASE := 0x40078000
-BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2
+BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 \
+	                    androidboot.selinux=permissive
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_RAMDISK_OFFSET := 0x07c08000
 BOARD_KERNEL_TAGS_OFFSET := 0x0bc08000
@@ -91,53 +92,41 @@ BOARD_MAIN_SIZE := 9122611200
 BOARD_MAIN_PARTITION_LIST := \
     system \
     product \
-    vendor \
-    odm
+    vendor
 
 # Workaround for error copying files to recovery ramdisk
 TARGET_COPY_OUT_VENDOR := vendor
 
 # System as root
 BOARD_SUPPRESS_SECURE_ERASE := true
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
+#BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
 BOARD_HAS_NO_SELECT_BUTTON := true
 
 # Metadata
-BOARD_USES_METADATA_PARTITION := true
-BOARD_ROOT_EXTRA_FOLDERS += metadata
+#BOARD_USES_METADATA_PARTITION := true
+#BOARD_ROOT_EXTRA_FOLDERS += metadata
 	
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
 TARGET_RECOVERY_FSTAB += $(DEVICE_PATH)/recovery/root/system/etc/recovery.fstab
 
-# Verified Boot
+# Android Verified Boot
 BOARD_AVB_ENABLE := true
-BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
-BOARD_AVB_VBMETA_SYSTEM := system
 BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
 BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
-
-BOARD_AVB_VBMETA_VENDOR := product vendor
-BOARD_AVB_VBMETA_VENDOR_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_VBMETA_VENDOR_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION := 2
-
-BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_RECOVERY_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 3
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 2
 
 #A11 DECRYPTION
-BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS += \
+#BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.boot.os_version:$(PLATFORM_VERSION) \
     --prop com.android.build.boot.security_patch:$(PLATFORM_SECURITY_PATCH)
 
 # Encryption
-PLATFORM_SECURITY_PATCH := 2021-06-05
-PLATFORM_VERSION := 11
-VENDOR_SECURITY_PATCH := 2021-06-05
+PLATFORM_SECURITY_PATCH := 2127-12-31
+PLATFORM_VERSION := 127
+VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
+PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
 
 # Hack: prevent anti rollback
 #PLATFORM_SECURITY_PATCH := 2022-02-05
@@ -158,7 +147,7 @@ RECOVERY_SDCARD_ON_DATA := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
 TARGET_RECOVERY_LCD_BACKLIGHT_PATH := "/sys/class/leds/lcd-backlight/brightness\"
-TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
+#TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
 TW_MAX_BRIGHTNESS := 255
 TW_DEFAULT_BRIGHTNESS := 100
 TARGET_USES_MKE2FS := true
@@ -168,16 +157,16 @@ TW_NO_SCREEN_BLANK := true
 TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
 TW_LOAD_VENDOR_MODULES := true
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
-TARGET_RECOVERY_INITRC := $(DEVICE_PATH)/recovery/root/init.recovery.mt6873.rc
+#TARGET_RECOVERY_INITRC := $(DEVICE_PATH)/recovery/root/init.recovery.mt6873.rc
 #TW_INTERNAL_STORAGE_PATH := "/data/media/0"
 #TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
 #TW_MTP_DEVICE := /dev/mtp_usb
 #TW_DEFAULT_EXTERNAL_STORAGE := true
 
 # Charger
-BOARD_CHARGER_DISABLE_INIT_BLANK := true
-BOARD_CHARGER_ENABLE_SUSPEND := true
-TARGET_DISABLE_TRIPLE_BUFFERING := false
+#BOARD_CHARGER_DISABLE_INIT_BLANK := true
+#BOARD_CHARGER_ENABLE_SUSPEND := true
+#TARGET_DISABLE_TRIPLE_BUFFERING := false
 
 # Exclude
 TW_EXCLUDE_TWRPAPP := true
@@ -192,33 +181,22 @@ TWRP_INCLUDE_LOGCAT := true
 # Crypto
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
-TW_INCLUDE_FBE := true
-TW_INCLUDE_FBE_METADATA_DECRYPT := true
-TW_USE_FSCRYPT_POLICY := 1
-TW_CRYPTO_FS_TYPE := "ext4"
-TW_CRYPTO_REAL_BLKDEV := "/dev/block/platform/bootdevice/by-name/userdata"
-TW_CRYPTO_MNT_POINT := "/data"
-TW_CRYPTO_FS_OPTIONS := "rw,seclabel,noatime,nosuid,nodev,noauto_da_alloc,errors=panic,inlinecrypt"
-TW_CRYPTO_KEY_LOC := "key"
+#TW_INCLUDE_FBE := true
+#TW_INCLUDE_FBE_METADATA_DECRYPT := true
+#TW_USE_FSCRYPT_POLICY := 1
+#TW_CRYPTO_FS_TYPE := "ext4"
+#TW_CRYPTO_REAL_BLKDEV := "/dev/block/platform/bootdevice/by-name/userdata"
+#TW_CRYPTO_MNT_POINT := "/data"
+#TW_CRYPTO_FS_OPTIONS := "rw,seclabel,noatime,nosuid,nodev,noauto_da_alloc,errors=panic,inlinecrypt"
+#TW_CRYPTO_KEY_LOC := "key"
 
 # Storage
-TW_NO_USB_STORAGE := false
-TW_INTERNAL_STORAGE_PATH := "/data/media/0"
-TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
-TW_EXTERNAL_STORAGE_PATH := "/external_sd"
-TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
-TW_HAS_MTP := true
-TW_MTP_DEVICE := /dev/mtp_usb
-TW_DEFAULT_EXTERNAL_STORAGE := true
+#TW_NO_USB_STORAGE := false
+#TW_INTERNAL_STORAGE_PATH := "/data/media/0"
+#TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
+#TW_EXTERNAL_STORAGE_PATH := "/external_sd"
+#TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
+#TW_HAS_MTP := true
+#TW_MTP_DEVICE := /dev/mtp_usb
+#TW_DEFAULT_EXTERNAL_STORAGE := true
 
-TARGET_RECOVERY_DEVICE_MODULES += \
-    libkeymaster4 \
-    libpuresoftkeymasterdevice
-    #ashmemd_aidl_interface-cpp \
-    libashmemd_client
-
-TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster4.so \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice.so
-    #$(TARGET_OUT_SHARED_LIBRARIES)/ashmemd_aidl_interface-cpp.so \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libashmemd_client.so \
