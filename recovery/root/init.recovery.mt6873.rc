@@ -1,53 +1,15 @@
 import /init.recovery.microtrust.rc
 
-on early-fs
-    start vold
-
 on init
     mkdir /mnt/vendor/persist 0700 root root
     mount ext4 /dev/block/platform/bootdevice/by-name/persist /mnt/vendor/persist
     export LD_LIBRARY_PATH /system/lib64:/vendor/lib64:/vendor/lib64/hw:/system/lib64/hw
-    export LD_LIBRARY_PATH /system/lib64:/vendor/lib64:/vendor/lib64/hw
-    export LD_LIBRARY_PATH /system/bin:/vendor/bin
-    export ANDROID_ROOT /system_root
-
-    # Create a more standard /dev/block layout for our scripts
-    symlink /dev/block/platform/bootdevice /dev/block/bootdevice
-    symlink /system_root/system /system
-
-    setprop sys.usb.configfs 1
-    setprop sys.usb.ffs.aio_compat 1
-    # pstore/ramoops previous console log
-    mount pstore pstore /sys/fs/pstore nodev noexec nosuid
-    chown system log /sys/fs/pstore/console-ramoops
-    chmod 0440 /sys/fs/pstore/console-ramoops
-    chown system log /sys/fs/pstore/console-ramoops-0
-    chmod 0440 /sys/fs/pstore/console-ramoops-0
-    chown system log /sys/fs/pstore/pmsg-ramoops-0
-    chmod 0440 /sys/fs/pstore/pmsg-ramoops-0
 
 on fs
-
-    mkdir /mnt/vendor 0700 root root
-    mkdir /mnt/vendor/protect_f 0700 root root
-    mkdir /mnt/vendor/protect_s 0700 root root
-    mkdir /mnt/vendor/nvdata 0700 root root
-    mkdir /mnt/vendor/nvcfg 0700 root root
-    mount ext4 /dev/block/platform/bootdevice/by-name/protect1 /mnt/vendor/protect_f
-    mount ext4 /dev/block/platform/bootdevice/by-name/protect2 /mnt/vendor/protect_s
-    mount ext4 /dev/block/platform/bootdevice/by-name/nvdata /mnt/vendor/nvdata
-    mount ext4 /dev/block/platform/bootdevice/by-name/nvcfg /mnt/vendor/nvcfg
-    symlink /mnt/vendor/protect_f /vendor/protect_f
-    symlink /mnt/vendor/protect_s /vendor/protect_s
-    symlink /mnt/vendor/nvcfg /vendor/nvcfg
-    symlink /mnt/vendor/nvdata /vendor/nvdata
-
     install_keyring
-    setprop crypto.ready 1
-	#start hwservicemanager
-    #start servicemanager
 
 on post-fs
+    start boot-hal-1-1
     # Support A/B feature for EMMC and UFS boot region
     wait /dev/block/mmcblk0boot0 2
     symlink /dev/block/sda /dev/block/mmcblk0boot0
@@ -61,37 +23,8 @@ on post-fs
     symlink /dev/block/by-name/preloader_a /dev/block/by-name/preloader_ufs_a
     symlink /dev/block/by-name/preloader_b /dev/block/by-name/preloader_ufs_b
 
-#service capi-2-0 /vendor/bin/hw/vendor.microtrust.hardware.capi@2.0-service
-    #user root
-    #group root
-    #disabled
-    #seclabel u:r:recovery:s0
-
-#service hidl_memory /system/bin/android.hidl.allocator@1.0-service
-    #user root
-    #group root
-    #disabled
-    #seclabel u:r:recovery:s0
-
-#service hwservicemanager /system/bin/hwservicemanager
-    #user root
-    #group root readproc
-    #disabled
-    #onrestart setprop hwservicemanager.ready false
-    #seclabel u:r:recovery:s0
-
-#service servicemanager /system/bin/servicemanager
-    #user root
-    #group root readproc
-    #disabled
-    #seclabel u:r:recovery:s0
-
-service keystore_auth /system/bin/keystore_auth
-    oneshot
-    user system
-    group root
-    disabled
-    seclabel u:r:recovery:s0
+    # Create a more standard /dev/block layout for our scripts
+    symlink /dev/block/platform/bootdevice /dev/block/bootdevice
 
 service keystore /system/bin/keystore /tmp/misc/keystore
     user root
@@ -100,48 +33,19 @@ service keystore /system/bin/keystore /tmp/misc/keystore
     seclabel u:r:recovery:s0
 
 service gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
+    interface android.hardware.gatekeeper@1.0::IGatekeeper default
     user root
     group root
     disabled
     seclabel u:r:recovery:s0
 
 service keymaster-4-0 /vendor/bin/hw/android.hardware.keymaster@4.0-service.beanpod
+    interface android.hardware.keymaster@4.0::IKeymasterDevice default
     user root
-    group root drmrpc
+    group root
     disabled
     seclabel u:r:recovery:s0
 
-on property:hwservicemanager.ready=true
-    #start teei_daemon
+on property:vendor.sys.listeners.registered=true
     start keymaster-4-0
-    start gatekeeper-1-0
-
-on property:ro.crypto.state=unsupported
-    stop teei_daemon
-    stop keymaster-4-0
-    stop gatekeeper-1-0
-    stop servicemanager
-    stop hwservicemanager
-
-on property:ro.crypto.state=unencrypted
-    stop teei_daemon
-    stop keymaster-4-0
-    stop gatekeeper-1-0
-    stop servicemanager
-    stop hwservicemanager
-
-on boot
-    start logging
-
-on property:twrp.decrypt.done=true
-    stop teei_daemon
-    stop keymaster-4-0
-    stop gatekeeper-1-0
-    stop servicemanager
-    stop hwservicemanager
-	
-on fs && property:ro.debuggable=0
-    # distinguish USB shoulde connect or not, i.e. CDP vs SDP
-    write /sys/class/udc/musb-hdrc/device/cmode 2
-    # set charging free due to it wait for USB activation
-    start adbd
+    start gatekeeper-1    
